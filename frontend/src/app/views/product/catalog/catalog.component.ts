@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ProductService} from "../../../shared/services/product.service";
 import {ProductType} from "../../../../types/product.type";
 import {CategoryService} from "../../../shared/services/category.service";
@@ -25,7 +25,7 @@ export class CatalogComponent implements OnInit {
   products: ProductType[] = [];
   categoriesWithTypes: CategoryWithTypeType[] = [];
   appliedFilters: AppliedFilterType[] = [];
-  sortingOpen = false;
+  sortingOpen: boolean = false;
   sortingOptions: { name: string, value: string }[] = [
     {name: 'От А до Я', value: 'az-asc'},
     {name: 'От Я до А', value: 'az-desc'},
@@ -197,10 +197,7 @@ export class CatalogComponent implements OnInit {
     })
   }
 
-  openPage(page
-             :
-             number
-  ) {
+  openPage(page: number) {
     this.activeParams.page = page;
     this.router.navigate(['/catalog'], {
       queryParams: this.activeParams
@@ -222,6 +219,14 @@ export class CatalogComponent implements OnInit {
       this.router.navigate(['/catalog'], {
         queryParams: this.activeParams
       })
+    }
+  }
+
+
+  @HostListener('document:click', ['$event'])
+  click(event: Event) {
+    if(this.sortingOpen && (event.target as HTMLElement).className.indexOf('catalog-sorting') === -1) {
+      this.sortingOpen = false;
     }
   }
 }
